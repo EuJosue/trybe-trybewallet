@@ -120,7 +120,6 @@ class LoginForm extends Component {
           } }
         />
         <LoadingButton
-          // loading
           disabled={ buttonIsDisabled }
           type="submit"
           variant="contained"

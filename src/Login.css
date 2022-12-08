@@ -1,0 +1,50 @@
+.backgroundImage {
+  background: url('./loginBackground.png') no-repeat;
+  background-size: cover;
+  bottom: 0;
+  height: 100vh;
+  left: 0;
+  mix-blend-mode: luminosity;
+  opacity: 0.5;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  user-select: none;
+  width: 100vw;
+  z-index: 1;
+}
+
+.background {
+  align-items: center;
+  background-color: #2fc18c;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  mix-blend-mode: normal;
+  opacity: 1;
+  position: relative;
+  width: 100vw;
+}
+
+.logo {
+  font-size: 40px;
+  margin-bottom: -8px;
+}
+
+.logoIcon {
+  background-color: #2fcf8f;
+  border-radius: 30%;
+  font-size: 43px;
+}
+
+.logoTrybe {
+  font-style: italic;
+  font-weight: 100;
+}
+
+.logoStrong {
+  color: #2fcf8f;
+  font-style: italic;
+  font-weight: 900;
+}
