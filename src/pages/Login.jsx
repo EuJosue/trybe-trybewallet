@@ -14,7 +14,6 @@ class Login extends React.Component {
           width
           marginX="50px"
           sx={ {
-            border: '1px solid black',
             borderRadius: '10px',
             minHeight: 350,
             minWidth: 350,
