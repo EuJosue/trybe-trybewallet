@@ -27,7 +27,7 @@ class Header extends Component {
 
   render() {
     const { menu } = this.state;
-    const { email, total } = this.props;
+    const { email, totalExpense } = this.props;
     return (
       <AppBar position="static">
         <Toolbar sx={ { justifyContent: 'space-between' } }>
@@ -45,23 +45,14 @@ class Header extends Component {
             </span>
           </IconButton>
 
-          <h6 data-testid="total-field">
-            <Typography
-              variant="h6"
-              component="div"
-            >
-              { `Total de Despesas: ${total}` }
-            </Typography>
-          </h6>
-
-          <h6 data-testid="header-currency-field">
-            <Typography
-              variant="h6"
-              component="div"
-            >
-              Câmbio atual: BRL
-            </Typography>
-          </h6>
+          <Typography
+            variant="h6"
+            component="div"
+          >
+            { 'Total de Despesas: ' }
+            <span data-testid="total-field">{ totalExpense }</span>
+            <span data-testid="header-currency-field">{ ' BRL' }</span>
+          </Typography>
 
           <Tooltip title="Open settings">
             <IconButton
@@ -105,14 +96,14 @@ class Header extends Component {
   }
 }
 
-const mapStateToProps = ({ user: { email } }) => ({
+const mapStateToProps = ({ user: { email }, wallet: { totalExpense } }) => ({
   email,
-  total: 0,
+  totalExpense,
 });
 
 Header.propTypes = {
   email: PropTypes.string.isRequired,
-  total: PropTypes.number.isRequired,
+  totalExpense: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps)(Header);

@@ -1,82 +1,106 @@
-            {/* <FormControl
-              sx={ {
-                minWidth: '100px',
-              } }
-            >
-              <InputLabel id="expenseCurrencyLabel">
-                Moeda
-              </InputLabel>
-              <Select
-                labelId="expenseCurrencyLabel"
-                name="expenseCurrency"
-                data-testid="currency-input"
-                label="Moeda"
-                value={ expenseCurrency }
-                onChange={ this.handleChange }
-              >
-                { currencies.map((currency) => (
-                  <MenuItem
-                    key={ currency }
-                    value={ currency }
-                  >
-                    { currency }
-                  </MenuItem>
-                )) }
-              </Select>
-            </FormControl>
+<TextField
+label="Descrição da despesa"
+type="text"
+data-testid="description-input"
+name="expenseDescription"
+value={ expenseDescription }
+onChange={ this.handleChange }
+sx={ {
+  width: '205px',
+} }
+/>
 
-            <FormControl
-              sx={ {
-                minWidth: '205px',
-              } }
-            >
-              <InputLabel id="expenseMethod">
-                Método de pagamento
-              </InputLabel>
-              <Select
-                labelId="expenseMethod"
-                name="expenseMethod"
-                data-testid="method-input"
-                label="Método de pagamento"
-                value={ expenseMethod }
-                onChange={ this.handleChange }
-              >
-                { ['Dinheiro', 'Cartão de crédito', 'Cartão de  débito']
-                  .map((method) => (
-                    <MenuItem
-                      key={ method }
-                      value={ method }
-                    >
-                      { method }
-                    </MenuItem>
-                  )) }
-              </Select>
-            </FormControl>
+<TextField
+label="Valor"
+type="number"
+data-testid="value-input"
+name="expenseValue"
+value={ expenseValue }
+onChange={ this.handleChange }
+sx={ {
+  width: '90px',
+} }
+/>
 
-            <FormControl
-              sx={ {
-                minWidth: '70px',
-              } }
-            >
-              <InputLabel id="expenseMethod">
-                Tag
-              </InputLabel>
-              <Select
-                labelId="expenseTag"
-                name="expenseTag"
-                data-testid="tag-input"
-                label="Tag"
-                value={ expenseTag }
-                onChange={ this.handleChange }
-              >
-                { ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde']
-                  .map((tag) => (
-                    <MenuItem
-                      key={ tag }
-                      value={ tag }
-                    >
-                      { tag }
-                    </MenuItem>
-                  )) }
-              </Select>
-            </FormControl> */}
+<FormControl
+  sx={ {
+    minWidth: '100px',
+  } }
+>
+  <InputLabel id="expenseCurrencyLabel">
+    Moeda
+  </InputLabel>
+  <Select
+    labelId="expenseCurrencyLabel"
+    name="expenseCurrency"
+    data-testid="currency-input"
+    label="Moeda"
+    value={ expenseCurrency }
+    onChange={ this.handleChange }
+  >
+    { currencies.map((currency) => (
+      <MenuItem
+        key={ currency }
+        value={ currency }
+      >
+        { currency }
+      </MenuItem>
+    )) }
+  </Select>
+</FormControl>
+
+<FormControl
+  sx={ {
+    minWidth: '205px',
+  } }
+>
+  <InputLabel id="expenseMethod">
+    Método de pagamento
+  </InputLabel>
+  <Select
+    labelId="expenseMethod"
+    name="expenseMethod"
+    data-testid="method-input"
+    label="Método de pagamento"
+    value={ expenseMethod }
+    onChange={ this.handleChange }
+  >
+    { ['Dinheiro', 'Cartão de crédito', 'Cartão de  débito']
+      .map((method) => (
+        <MenuItem
+          key={ method }
+          value={ method }
+        >
+          { method }
+        </MenuItem>
+      )) }
+  </Select>
+</FormControl>
+
+<FormControl
+  sx={ {
+    minWidth: '70px',
+  } }
+>
+  <InputLabel id="expenseMethod">
+    Tag
+  </InputLabel>
+  <Select
+    labelId="expenseTag"
+    name="expenseTag"
+    data-testid="tag-input"
+    label="Tag"
+    value={ expenseTag }
+    onChange={ this.handleChange }
+  >
+    { ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde']
+      .map((tag) => (
+        <MenuItem
+          key={ tag }
+          value={ tag }
+        >
+          { tag }
+        </MenuItem>
+      )) }
+  </Select>
+</FormControl>

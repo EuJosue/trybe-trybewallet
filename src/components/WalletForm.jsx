@@ -1,8 +1,9 @@
 import { LoadingButton } from '@mui/lab';
 import {
   Box,
+  // Input,
   /* FormControl, InputLabel, MenuItem, Select, */
-  TextField,
+  // TextField,
 } from '@mui/material';
 import React, { Component } from 'react';
 import {
@@ -12,13 +13,17 @@ import {
   /* number, shape, bool */
 } from 'prop-types';
 import { connect } from 'react-redux';
-import { actionSetCurrencies } from '../redux/actions';
+import { actionSetCurrencies, newExpense } from '../redux/actions';
+
+const alimentacao = 'Alimentação';
 
 class WalletForm extends Component {
   state = {
-    expenseCurrency: '',
-    expenseMethod: '',
-    expenseTag: '',
+    expenseCurrency: 'USD',
+    expenseMethod: 'Dinheiro',
+    expenseTag: alimentacao,
+    expenseDescription: '',
+    expenseValue: '',
   };
 
   componentDidMount() {
@@ -38,12 +43,42 @@ class WalletForm extends Component {
     });
   };
 
+  handleSubmit = (event) => {
+    event.preventDefault();
+    const {
+      expenseCurrency,
+      expenseMethod,
+      expenseTag,
+      expenseDescription,
+      expenseValue,
+    } = this.state;
+    const { dispatch } = this.props;
+
+    dispatch(newExpense({
+      value: expenseValue,
+      description: expenseDescription,
+      currency: expenseCurrency,
+      method: expenseMethod,
+      tag: expenseTag,
+    }));
+
+    this.setState({
+      expenseCurrency: 'USD',
+      expenseMethod: 'Dinheiro',
+      expenseTag: alimentacao,
+      expenseDescription: '',
+      expenseValue: '',
+    });
+  };
+
   render() {
     const { currencies } = this.props;
     const {
       expenseCurrency,
       expenseMethod,
       expenseTag,
+      expenseDescription,
+      expenseValue,
     } = this.state;
     return (
       <Box
@@ -58,7 +93,7 @@ class WalletForm extends Component {
           noValidate
           autoComplete="off"
           autoSave="off"
-          onSubmit={ (event) => { event.preventDefault(); } }
+          onSubmit={ this.handleSubmit }
           sx={ {
             justifyContent: 'space-between',
             display: 'flex',
@@ -74,24 +109,22 @@ class WalletForm extends Component {
             } }
           >
 
-            <TextField
-              label="Descrição da despesa"
+            <input
+              placeholder="Descrição da despesa"
               type="text"
               data-testid="description-input"
               name="expenseDescription"
-              sx={ {
-                width: '205px',
-              } }
+              value={ expenseDescription }
+              onChange={ this.handleChange }
             />
 
-            <TextField
-              label="Valor"
+            <input
+              placeholder="Valor"
               type="number"
               data-testid="value-input"
               name="expenseValue"
-              sx={ {
-                width: '90px',
-              } }
+              value={ expenseValue }
+              onChange={ this.handleChange }
             />
 
             <select
@@ -115,7 +148,7 @@ class WalletForm extends Component {
               value={ expenseMethod }
               onChange={ this.handleChange }
             >
-              { ['Dinheiro', 'Cartão de crédito', 'Cartão de  débito']
+              { ['Dinheiro', 'Cartão de crédito', 'Cartão de débito']
                 .map((method) => (
                   <option
                     key={ method }
@@ -132,7 +165,7 @@ class WalletForm extends Component {
               onChange={ this.handleChange }
             >
 
-              { ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde']
+              { [alimentacao, 'Lazer', 'Trabalho', 'Transporte', 'Saúde']
                 .map((tag) => (
                   <option
                     key={ tag }
@@ -150,7 +183,7 @@ class WalletForm extends Component {
             type="submit"
             variant="contained"
           >
-            Entrar
+            Adicionar Despesas
           </LoadingButton>
         </Box>
       </Box>
