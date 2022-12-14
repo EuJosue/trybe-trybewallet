@@ -7,7 +7,7 @@ const INITIAL_STATE = {
   expenses: [], // array de objetos, com cada objeto tendo as chaves id, value, currency, method, tag, description e exchangeRates
   editor: false, // boolean que indica de uma despesa está sendo editada
   idToEdit: 0, // numérico que armazena o id da despesa que esta sendo editada
-  totalExpense: 0,
+  totalExpense: '0',
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {

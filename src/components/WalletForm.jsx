@@ -200,15 +200,6 @@ WalletForm.propTypes = {
   currencies: arrayOf(string).isRequired,
   // editor: bool.isRequired,
   // idToEdit: number.isRequired,
-  // expenses: arrayOf(shape({
-  //   id: number,
-  //   value: string,
-  //   description: string,
-  //   currency: string,
-  //   method: string,
-  //   tag: string,
-  //   exchangesRates: shape({}),
-  // })).isRequired,
 };
 
 export default connect(mapStateToProps)(WalletForm);
