@@ -1,6 +1,13 @@
 // Esse reducer será responsável por tratar as informações da pessoa usuária
 
-import { DELETE_EXPENSE, NEW_EXPENSE, SET_CURRENCIES, START_FETCH } from '../actions';
+import {
+  DELETE_EXPENSE,
+  START_EDIT_EXPENSE,
+  NEW_EXPENSE,
+  SET_CURRENCIES,
+  START_FETCH,
+  FINISH_EDIT_EXPENSE,
+} from '../actions';
 
 const INITIAL_STATE = {
   currencies: [], // array de string
@@ -30,6 +37,21 @@ const userReducer = (state = INITIAL_STATE, action) => {
       totalExpense: totalExpense(expenses),
     };
   }
+
+  case START_EDIT_EXPENSE:
+    return {
+      ...state,
+      editor: true,
+      idToEdit: action.payload,
+    };
+
+  case FINISH_EDIT_EXPENSE:
+    return {
+      ...state,
+      editor: false,
+      expenses: action.payload,
+      totalExpense: totalExpense(action.payload),
+    };
 
   case SET_CURRENCIES:
     return {

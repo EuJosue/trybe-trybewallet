@@ -12,7 +12,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { shape, func, arrayOf, string, number } from 'prop-types';
 import { Delete, Edit } from '@mui/icons-material';
-import { actionDeleteExpense } from '../redux/actions';
+import { actionDeleteExpense, actionStartEditExpense } from '../redux/actions';
 
 class Table extends Component {
   convertValue = (value, exchangeRates, currency) => value * exchangeRates[currency].ask;
@@ -21,6 +21,12 @@ class Table extends Component {
     const { dispatch } = this.props;
 
     dispatch(actionDeleteExpense(id));
+  };
+
+  handleEdit = (id) => {
+    const { dispatch } = this.props;
+
+    dispatch(actionStartEditExpense(id));
   };
 
   render() {
@@ -87,7 +93,10 @@ class Table extends Component {
                     <Delete />
                   </IconButton>
 
-                  <IconButton>
+                  <IconButton
+                    data-testid="edit-btn"
+                    onClick={ () => this.handleEdit(id) }
+                  >
                     <Edit />
                   </IconButton>
                 </TableCell>

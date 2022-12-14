@@ -11,30 +11,36 @@ import {
   string,
   arrayOf,
   bool,
-  /* number, shape, */
+  number,
+  shape,
 } from 'prop-types';
 import { connect } from 'react-redux';
-import { actionSetCurrencies, newExpense } from '../redux/actions';
+import {
+  actionFinishEditExpense,
+  newExpense,
+  setCurrencies,
+} from '../redux/actions';
 
 const alimentacao = 'Alimentação';
 
 class WalletForm extends Component {
   state = {
-    expenseCurrency: 'USD',
-    expenseMethod: 'Dinheiro',
-    expenseTag: alimentacao,
-    expenseDescription: '',
-    expenseValue: '',
+    currency: 'USD',
+    method: 'Dinheiro',
+    tag: alimentacao,
+    description: '',
+    value: '',
+    editorState: true,
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
-    fetch('https://economia.awesomeapi.com.br/json/all')
-      .then((response) => response.json())
-      .then((data) => {
-        delete data.USDT;
-        dispatch(actionSetCurrencies(Object.keys(data)));
-      });
+
+    dispatch(setCurrencies());
+  }
+
+  componentDidUpdate() {
+    this.editorMode();
   }
 
   handleChange = ({ target }) => {
@@ -44,43 +50,71 @@ class WalletForm extends Component {
     });
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-    const {
-      expenseCurrency,
-      expenseMethod,
-      expenseTag,
-      expenseDescription,
-      expenseValue,
+  buildExpenseObject = () => {
+    const { currency, method, tag, description, value,
     } = this.state;
-    const { dispatch } = this.props;
+    return {
+      value,
+      description,
+      currency,
+      method,
+      tag,
+    };
+  };
 
-    dispatch(newExpense({
-      value: expenseValue,
-      description: expenseDescription,
-      currency: expenseCurrency,
-      method: expenseMethod,
-      tag: expenseTag,
-    }));
-
+  clearForm = () => {
     this.setState({
-      expenseCurrency: 'USD',
-      expenseMethod: 'Dinheiro',
-      expenseTag: alimentacao,
-      expenseDescription: '',
-      expenseValue: '',
+      currency: 'USD',
+      method: 'Dinheiro',
+      tag: alimentacao,
+      description: '',
+      value: '',
     });
   };
 
+  handleSubmit = () => {
+    const { dispatch } = this.props;
+    dispatch(newExpense(this.buildExpenseObject()));
+    this.clearForm();
+  };
+
+  editorMode = () => {
+    const { editor, expenses, idToEdit } = this.props;
+    const { editorState } = this.state;
+
+    if (editor && editorState) {
+      const { value, description, currency, method, tag,
+      } = expenses.find(({ id }) => id === idToEdit);
+      this.setState({
+        editorState: false,
+        currency,
+        method,
+        tag,
+        description,
+        value,
+      });
+    }
+  };
+
+  editorComplete = () => {
+    const { expenses, idToEdit, dispatch } = this.props;
+    const newExpenses = expenses
+      .map((expense) => (expense.id === idToEdit
+        ? {
+          ...expense,
+          ...this.buildExpenseObject(),
+        }
+        : expense));
+
+    dispatch(actionFinishEditExpense(newExpenses));
+    this.clearForm();
+  };
+
   render() {
-    const { currencies, isFetching } = this.props;
-    const {
-      expenseCurrency,
-      expenseMethod,
-      expenseTag,
-      expenseDescription,
-      expenseValue,
+    const { currencies, isFetching, editor } = this.props;
+    const { currency, method, tag, description, value,
     } = this.state;
+
     return (
       <Box
         sx={ {
@@ -94,7 +128,10 @@ class WalletForm extends Component {
           noValidate
           autoComplete="off"
           autoSave="off"
-          onSubmit={ this.handleSubmit }
+          onSubmit={ (event) => {
+            event.preventDefault();
+            return (editor ? this.editorComplete(event) : this.handleSubmit(event));
+          } }
           sx={ {
             justifyContent: 'space-between',
             display: 'flex',
@@ -114,8 +151,8 @@ class WalletForm extends Component {
               placeholder="Descrição da despesa"
               type="text"
               data-testid="description-input"
-              name="expenseDescription"
-              value={ expenseDescription }
+              name="description"
+              value={ description }
               onChange={ this.handleChange }
             />
 
@@ -123,56 +160,56 @@ class WalletForm extends Component {
               placeholder="Valor"
               type="number"
               data-testid="value-input"
-              name="expenseValue"
-              value={ expenseValue }
+              name="value"
+              value={ value }
               onChange={ this.handleChange }
             />
 
             <select
-              name="expenseCurrency"
-              value={ expenseCurrency }
+              name="currency"
+              value={ currency }
               onChange={ this.handleChange }
               data-testid="currency-input"
             >
-              { currencies.map((currency) => (
+              { currencies.map((currencyType) => (
                 <option
-                  key={ currency }
-                  value={ currency }
+                  key={ currencyType }
+                  value={ currencyType }
                 >
-                  { currency }
+                  { currencyType }
                 </option>
               )) }
             </select>
             <select
-              name="expenseMethod"
+              name="method"
               data-testid="method-input"
-              value={ expenseMethod }
+              value={ method }
               onChange={ this.handleChange }
             >
               { ['Dinheiro', 'Cartão de crédito', 'Cartão de débito']
-                .map((method) => (
+                .map((methodType) => (
                   <option
-                    key={ method }
-                    value={ method }
+                    key={ methodType }
+                    value={ methodType }
                   >
-                    { method }
+                    { methodType }
                   </option>
                 )) }
             </select>
             <select
-              name="expenseTag"
+              name="tag"
               data-testid="tag-input"
-              value={ expenseTag }
+              value={ tag }
               onChange={ this.handleChange }
             >
 
               { [alimentacao, 'Lazer', 'Trabalho', 'Transporte', 'Saúde']
-                .map((tag) => (
+                .map((tagType) => (
                   <option
-                    key={ tag }
-                    value={ tag }
+                    key={ tagType }
+                    value={ tagType }
                   >
-                    { tag }
+                    { tagType }
                   </option>
                 )) }
             </select>
@@ -184,7 +221,7 @@ class WalletForm extends Component {
             type="submit"
             variant="contained"
           >
-            Adicionar Despesas
+            { editor ? 'Editar despesa' : 'Adicionar Despesas' }
           </LoadingButton>
         </Box>
       </Box>
@@ -192,17 +229,21 @@ class WalletForm extends Component {
   }
 }
 
-const mapStateToProps = ({ wallet: { currencies, isFetching } }) => ({
-  currencies,
-  isFetching,
+const mapStateToProps = ({ wallet }) => ({
+  currencies: wallet.currencies,
+  isFetching: wallet.isFetching,
+  idToEdit: wallet.idToEdit,
+  editor: wallet.editor,
+  expenses: wallet.expenses,
 });
 
 WalletForm.propTypes = {
   dispatch: func.isRequired,
   currencies: arrayOf(string).isRequired,
   isFetching: bool.isRequired,
-  // editor: bool.isRequired,
-  // idToEdit: number.isRequired,
+  editor: bool.isRequired,
+  idToEdit: number.isRequired,
+  expenses: arrayOf(shape({ id: number })).isRequired,
 };
 
 export default connect(mapStateToProps)(WalletForm);
