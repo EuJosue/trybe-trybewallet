@@ -49,29 +49,39 @@ class Table extends Component {
                 key={ id }
                 sx={ { '&:last-child td, &:last-child th': { border: 0 } } }
               >
-                <TableCell align="center" component="th" scope="row">
+                <TableCell align="center" scope="row">
                   { description }
                 </TableCell>
+
                 <TableCell align="center">{ tag }</TableCell>
                 <TableCell align="center">{ method }</TableCell>
-                <TableCell align="center">{ value }</TableCell>
-                <TableCell align="center">{ currency }</TableCell>
+                <TableCell align="center">{ Number(value).toFixed(2) }</TableCell>
+
                 <TableCell align="center">
-                  { exchangeRates[currency].ask }
+                  { exchangeRates[currency].name }
                 </TableCell>
+
+                <TableCell align="center">
+                  { Number(exchangeRates[currency].ask).toFixed(2) }
+                </TableCell>
+
                 <TableCell align="center">
                   { 'R$ ' }
-                  { this.convertValue(value, exchangeRates, currency) }
+                  { this.convertValue(value, exchangeRates, currency).toFixed(2) }
                 </TableCell>
-                <TableCell align="center">BRL</TableCell>
+
+                <TableCell align="center">Real</TableCell>
+
                 <TableCell align="center">
                   <IconButton>
                     <Delete />
                   </IconButton>
+
                   <IconButton>
                     <Edit />
                   </IconButton>
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>
