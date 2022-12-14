@@ -10,7 +10,8 @@ import {
   func,
   string,
   arrayOf,
-  /* number, shape, bool */
+  bool,
+  /* number, shape, */
 } from 'prop-types';
 import { connect } from 'react-redux';
 import { actionSetCurrencies, newExpense } from '../redux/actions';
@@ -72,7 +73,7 @@ class WalletForm extends Component {
   };
 
   render() {
-    const { currencies } = this.props;
+    const { currencies, isFetching } = this.props;
     const {
       expenseCurrency,
       expenseMethod,
@@ -179,7 +180,7 @@ class WalletForm extends Component {
           </Box>
 
           <LoadingButton
-            // disabled={ buttonIsDisabled }
+            loading={ isFetching }
             type="submit"
             variant="contained"
           >
@@ -191,13 +192,15 @@ class WalletForm extends Component {
   }
 }
 
-const mapStateToProps = ({ wallet: { currencies } }) => ({
+const mapStateToProps = ({ wallet: { currencies, isFetching } }) => ({
   currencies,
+  isFetching,
 });
 
 WalletForm.propTypes = {
   dispatch: func.isRequired,
   currencies: arrayOf(string).isRequired,
+  isFetching: bool.isRequired,
   // editor: bool.isRequired,
   // idToEdit: number.isRequired,
 };

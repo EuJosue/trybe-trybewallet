@@ -10,11 +10,18 @@ import {
 } from '@mui/material';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { shape, arrayOf, string, number } from 'prop-types';
+import { shape, func, arrayOf, string, number } from 'prop-types';
 import { Delete, Edit } from '@mui/icons-material';
+import { actionDeleteExpense } from '../redux/actions';
 
 class Table extends Component {
   convertValue = (value, exchangeRates, currency) => value * exchangeRates[currency].ask;
+
+  handleDelete = (id) => {
+    const { dispatch } = this.props;
+
+    dispatch(actionDeleteExpense(id));
+  };
 
   render() {
     const { expenses } = this.props;
@@ -73,7 +80,10 @@ class Table extends Component {
                 <TableCell align="center">Real</TableCell>
 
                 <TableCell align="center">
-                  <IconButton>
+                  <IconButton
+                    data-testid="delete-btn"
+                    onClick={ () => this.handleDelete(id) }
+                  >
                     <Delete />
                   </IconButton>
 
@@ -97,6 +107,7 @@ const mapStateToProps = ({ wallet: { expenses } }) => ({
 });
 
 Table.propTypes = {
+  dispatch: func.isRequired,
   expenses: arrayOf(shape({
     id: number,
     value: string,
