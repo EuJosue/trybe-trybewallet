@@ -1,11 +1,19 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import Header from '../components/Header';
 import mockData from './helpers/mockData';
 import { renderWithRouterAndRedux } from './helpers/renderWith';
 
+const EMAIL = 'email@email.com';
+
 describe('Tela de Login', () => {
+  beforeEach(() => {
+    global.fetch = jest.fn().mockResolvedValue({
+      json: jest.fn().mockResolvedValue(mockData),
+    });
+  });
+
   it('O pathname deve ser \'/\'', () => {
     const { history } = renderWithRouterAndRedux(<App />);
 
@@ -39,7 +47,7 @@ describe('Tela de Login', () => {
     const email = screen.getByRole('textbox', { name: /email/i });
     const password = screen.getByLabelText(/senha/i);
 
-    userEvent.type(email, 'email@email.com');
+    userEvent.type(email, EMAIL);
     userEvent.type(password, '123456');
 
     expect(button).not.toBeDisabled();
@@ -54,33 +62,32 @@ describe('Tela de Login', () => {
 
     userEvent.type(email, 'email.com');
     userEvent.type(password, '123456');
+    userEvent.click(screen.getByTestId('VisibilityIcon'));
 
     expect(button).toBeDisabled();
 
     userEvent.clear(email);
     userEvent.clear(password);
-    userEvent.type(email, 'teste@email.com');
+    userEvent.type(email, EMAIL);
     userEvent.type(password, '12456');
 
     expect(button).toBeDisabled();
   });
 
-  it('Se feito login corretamente deve ser redirecionado para a página \'carteira\'', () => {
+  it('Se feito login corretamente deve ser redirecionado para a página \'carteira\'', async () => {
     const { history } = renderWithRouterAndRedux(<App />);
 
     const button = screen.getByRole('button', { name: /entrar/i });
     const email = screen.getByRole('textbox', { name: /email/i });
     const password = screen.getByLabelText(/senha/i);
 
-    userEvent.type(email, 'email@email.com');
+    userEvent.type(email, EMAIL);
     userEvent.type(password, '123456');
     userEvent.click(button);
 
     expect(history.location.pathname).toBe('/carteira');
   });
-});
 
-describe.only('Header', () => {
   it('Deve exibir o email da pessoa usuária e o totalExpense', () => {
     const options = {
       initialState: {
@@ -92,56 +99,60 @@ describe.only('Header', () => {
           totalExpense: '0',
         },
         user: {
-          email: 'teste@teste.com',
+          email: EMAIL,
         },
       },
     };
 
     renderWithRouterAndRedux(<Header />, options);
 
-    const email = screen.getByText(/teste@teste\.com/i);
+    const email = screen.getByText(EMAIL);
     const expenses = screen.getByText(/0/i);
 
     expect(email).toBeInTheDocument();
     expect(expenses).toBeInTheDocument();
+
+    userEvent.click(email);
+    userEvent.click(screen.getByRole('menuitem', { name: /profile/i }));
   });
 
-  it.skip('', () => {
-    const options = {
-      initialState: {
-        wallet: {
-          currencies: [],
-          expenses: [],
-          editor: false,
-          idToEdit: 0,
-          totalExpense: '0',
-        },
-        user: {
-          email: 'teste@teste.com',
-        },
-      },
-    };
+  it('100% coverage ', async () => {
+    renderWithRouterAndRedux(<App />);
 
-    renderWithRouterAndRedux(<App />, options);
-  });
-});
+    const loginButton = screen.getByRole('button', { name: /entrar/i });
+    const email = screen.getByRole('textbox', { name: /email/i });
+    const password = screen.getByLabelText(/senha/i);
 
-describe('Carteira', () => {
-  beforeEach(() => {
-    jest.spyOn(global, 'fetch').mockResolvedValue({
-      json: jest.fn().mockResolvedValue(mockData),
+    userEvent.type(email, EMAIL);
+    userEvent.type(password, '123456');
+    userEvent.click(loginButton);
+
+    const descriptionInput = await screen.findByRole('textbox');
+    const valueInput = screen.getByRole('spinbutton');
+    const selectCurrency = screen.getByTestId('currency-input');
+    const selectMethod = screen.getByTestId('method-input');
+    const selectTag = screen.getByTestId('tag-input');
+    const submitButton = screen.getByRole('button', { name: /adicionar despesas/i });
+
+    userEvent.type(descriptionInput, 'descrição');
+    userEvent.type(valueInput, '12');
+    userEvent.selectOptions(selectMethod, 'Cartão de crédito');
+    userEvent.selectOptions(selectTag, 'Lazer');
+    waitFor(() => {
+      userEvent.selectOptions(selectCurrency, 'CAD');
+      userEvent.click(submitButton);
     });
-  });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+    expect(await screen.findByRole('cell', { name: /descrição/i })).toBeInTheDocument();
 
-  it('', () => {
-    renderWithRouterAndRedux(<App />, options);
-  });
+    const editButton = screen.getByTestId('EditIcon');
 
-  it.skip('', () => {
-    renderWithRouterAndRedux(<App />, options);
+    userEvent.click(editButton);
+
+    userEvent.clear(descriptionInput);
+    userEvent.type(descriptionInput, 'despesa');
+    userEvent.click(screen.getByRole('button', { name: /editar despesa/i }));
+
+    expect(await screen.findByRole('cell', { name: /despesa/i })).toBeInTheDocument();
   });
 });
